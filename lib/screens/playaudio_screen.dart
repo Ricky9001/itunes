@@ -4,16 +4,25 @@ import 'package:itunes/models/song.dart';
 import 'package:itunes/viewmodels/audio_viewmodel.dart';
 
 class AudioPlayerScreen extends StatelessWidget {
-  final Song song;
-  AudioPlayerScreen({required this.song});
+  final List<Song> songs;
+  final int index;
+  AudioPlayerScreen({required this.songs, required this.index});
+
+  String formatTime(Duration duration) {
+    String sec = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    String showTime = '${duration.inMinutes}:${sec}';
+    return showTime;
+  }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AudioViewmodel(song),
+      create: (_) => AudioViewmodel(songs, index),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(song.collectionName),
+          title: Consumer<AudioViewmodel>(
+              builder: (context, viewModel, child) =>
+                  Text(viewModel.currSong.collectionName)),
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -49,7 +58,8 @@ class AudioPlayerScreen extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: FittedBox(
-                              child: Image.network(song.artworkUrl100),
+                              child: Image.network(
+                                  viewModel.currSong.artworkUrl100),
                               fit: BoxFit.fitWidth,
                             ),
                           ),
@@ -63,11 +73,11 @@ class AudioPlayerScreen extends StatelessWidget {
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(song.trackName,
+                                  Text(viewModel.currSong.trackName,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20)),
-                                  Text(song.artistName),
+                                  Text(viewModel.currSong.artistName),
                                 ],
                               ))
                             ],
@@ -79,17 +89,32 @@ class AudioPlayerScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('0:00'),
-                    GestureDetector(onTap: () {}, child: Icon(Icons.repeat)),
-                    Text('0:00'),
+                    Text(formatTime(viewModel.currDuration)),
+                    GestureDetector(
+                      onTap: () {
+                        viewModel.toggleRepeat();
+                      },
+                      child: viewModel.isRepeat
+                          ? Icon(Icons.repeat_outlined, color: Colors.blue)
+                          : Icon(Icons.repeat),
+                    ),
+                    Text(formatTime(viewModel.playDuration)),
                   ],
                 ),
-                Slider(
-                  min: 0,
-                  max: 100,
-                  value: 50,
-                  activeColor: Colors.lightBlue,
-                  onChanged: (double double) {},
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 0)),
+                  child: Slider(
+                      min: 0,
+                      max: viewModel.playDuration.inSeconds.toDouble(),
+                      value: viewModel.currDuration.inSeconds.toDouble(),
+                      activeColor: Colors.lightBlue,
+                      onChanged: (double double) {},
+                      onChangeEnd: (double double) {
+                        viewModel
+                            .processDuration(Duration(seconds: double.toInt()));
+                      }),
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -97,7 +122,7 @@ class AudioPlayerScreen extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: viewModel.playPrev,
                         child: Icon(Icons.skip_previous),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -131,7 +156,7 @@ class AudioPlayerScreen extends StatelessWidget {
                     Expanded(
                       flex: 1,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: viewModel.playNext,
                         child: Icon(Icons.skip_next),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
