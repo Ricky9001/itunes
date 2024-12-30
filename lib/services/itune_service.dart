@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ITuneService {
   static const String _url =
-      'https://itunes.apple.com/search?term=Taylor+Swift&limit200&media=music';
+      'https://itunes.apple.com/search?term=Taylor+Swift&limit=200&media=music';
 
   Future<List<dynamic>> searchSongs() async {
     final response = await http.get(Uri.parse(_url));
