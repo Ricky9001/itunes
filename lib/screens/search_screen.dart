@@ -51,6 +51,25 @@ class SearchScreen extends StatelessWidget {
                 Expanded(
                   child: SongList(songs: viewModel.songs),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        onPressed: viewModel.currPage > 1
+                            ? () => viewModel.prevPage()
+                            : null,
+                        icon: Icon(Icons.arrow_back)),
+                    Text('Page ${viewModel.currPage}'),
+                    IconButton(
+                        onPressed: viewModel.currPage * viewModel.pageSize <
+                                viewModel.totalNum
+                            ? () {
+                                viewModel.nextPage();
+                              }
+                            : null,
+                        icon: Icon(Icons.arrow_forward)),
+                  ],
+                )
               ],
             ),
           );

@@ -7,15 +7,23 @@ class SearchViewModel extends ChangeNotifier {
   final ITuneService _iTunesService = ITuneService();
   List<Song> _songs = [];
   List<Song> _filterSongs = [];
+  List<Song> _pageSongs = [];
   String _term = '';
   String _sortOption = 'trackName';
   String _error = '';
   Timer? _timer;
+  int _currPage = 1;
+  int _pageSize = 10;
+  int _totalNum = 0;
 
-  List<Song> get songs => _filterSongs;
+  List<Song> get songs => _pageSongs;
   String get term => _term;
   String get sortOption => _sortOption;
   String get error => _error;
+  int get currPage => _currPage;
+  int get pageSize => _pageSize;
+  int get totalNum => _totalNum;
+
   SearchViewModel() {
     searchSongs();
   }
@@ -34,6 +42,7 @@ class SearchViewModel extends ChangeNotifier {
       final results = await _iTunesService.searchSongs();
       _songs = results.map((data) => Song.fromJson(data)).toList();
       filterSongs();
+      pageSongs();
     } catch (err) {
       _error = 'Cannot fetch songs';
     }
@@ -43,6 +52,7 @@ class SearchViewModel extends ChangeNotifier {
   void setSortOption(String option) {
     _sortOption = option;
     sortSongs();
+    pageSongs();
     notifyListeners();
   }
 
@@ -51,7 +61,9 @@ class SearchViewModel extends ChangeNotifier {
       return song.trackName.toLowerCase().contains(_term.toLowerCase()) ||
           song.collectionName.toLowerCase().contains(_term.toLowerCase());
     }).toList();
+    _totalNum = _filterSongs.length;
     sortSongs();
+    pageSongs();
     notifyListeners();
   }
 
@@ -70,6 +82,30 @@ class SearchViewModel extends ChangeNotifier {
           return a.trackName.toLowerCase().compareTo(b.trackName.toLowerCase());
         }
       });
+    }
+  }
+
+  void pageSongs() {
+    final startIndex = (_currPage - 1) * _pageSize;
+    final endIndex = startIndex + _pageSize;
+    _pageSongs = _filterSongs.sublist(startIndex,
+        endIndex > _filterSongs.length ? _filterSongs.length : endIndex);
+    notifyListeners();
+  }
+
+  void nextPage() {
+    if (_currPage * _pageSize < _filterSongs.length) {
+      _currPage++;
+      pageSongs();
+      notifyListeners();
+    }
+  }
+
+  void prevPage() {
+    if (_currPage > 1) {
+      _currPage--;
+      pageSongs();
+      notifyListeners();
     }
   }
 
