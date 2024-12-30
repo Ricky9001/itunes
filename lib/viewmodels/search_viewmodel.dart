@@ -40,7 +40,15 @@ class SearchViewModel extends ChangeNotifier {
   Future<void> searchSongs() async {
     try {
       final results = await _iTunesService.searchSongs();
-      _songs = results.map((data) => Song.fromJson(data)).toList();
+
+      if (results.isEmpty) {
+        _error = 'No song is found.';
+      } else {
+        _error = '';
+        _songs = results.map((data) => Song.fromJson(data)).toList();
+        filterSongs();
+        pageSongs();
+      }
       filterSongs();
       pageSongs();
     } catch (err) {
@@ -61,6 +69,9 @@ class SearchViewModel extends ChangeNotifier {
       return song.trackName.toLowerCase().contains(_term.toLowerCase()) ||
           song.collectionName.toLowerCase().contains(_term.toLowerCase());
     }).toList();
+    if (_filterSongs.isEmpty) {
+      _error = 'No song is found. Please search another keywords';
+    }
     _totalNum = _filterSongs.length;
     sortSongs();
     pageSongs();

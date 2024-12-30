@@ -42,34 +42,39 @@ class SearchScreen extends StatelessWidget {
                   onChanged: viewModel.setTerm,
                   onSubmitted: viewModel.searchSongs,
                 ),
-                if (viewModel.error.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(viewModel.error,
-                        style: TextStyle(color: Colors.red)),
-                  ),
-                Expanded(
-                  child: SongList(songs: viewModel.songs),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                        onPressed: viewModel.currPage > 1
-                            ? () => viewModel.prevPage()
-                            : null,
-                        icon: Icon(Icons.arrow_back)),
-                    Text('Page ${viewModel.currPage}'),
-                    IconButton(
-                        onPressed: viewModel.currPage * viewModel.pageSize <
-                                viewModel.totalNum
-                            ? () {
-                                viewModel.nextPage();
-                              }
-                            : null,
-                        icon: Icon(Icons.arrow_forward)),
-                  ],
-                )
+                viewModel.error.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(viewModel.error,
+                            style: TextStyle(color: Colors.red, fontSize: 20)),
+                      )
+                    : Expanded(
+                        child: SongList(songs: viewModel.songs),
+                      ),
+                viewModel.error.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(0),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: viewModel.currPage > 1
+                                  ? () => viewModel.prevPage()
+                                  : null,
+                              icon: Icon(Icons.arrow_back)),
+                          Text('Page ${viewModel.currPage}'),
+                          IconButton(
+                              onPressed:
+                                  viewModel.currPage * viewModel.pageSize <
+                                          viewModel.totalNum
+                                      ? () {
+                                          viewModel.nextPage();
+                                        }
+                                      : null,
+                              icon: Icon(Icons.arrow_forward)),
+                        ],
+                      )
               ],
             ),
           );
