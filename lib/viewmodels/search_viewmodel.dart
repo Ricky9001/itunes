@@ -5,11 +5,12 @@ import 'package:itunes/services/itune_service.dart';
 class SearchViewModel extends ChangeNotifier {
   final ITuneService _iTunesService = ITuneService();
   List<Song> _songs = [];
+  List<Song> _filterSongs = [];
   String _term = '';
   String _sortOption = 'trackName';
   String _error = '';
 
-  List<Song> get songs => _songs;
+  List<Song> get songs => _filterSongs;
   String get term => _term;
   String get sortOption => _sortOption;
   String get error => _error;
@@ -23,7 +24,7 @@ class SearchViewModel extends ChangeNotifier {
     try {
       final results = await _iTunesService.searchSongs();
       _songs = results.map((data) => Song.fromJson(data)).toList();
-      _sortSongs();
+      filterSongs();
     } catch (err) {
       _error = 'Cannot fetch songs';
     }
@@ -32,16 +33,25 @@ class SearchViewModel extends ChangeNotifier {
 
   void setSortOption(String option) {
     _sortOption = option;
-    _sortSongs();
+    sortSongs();
     notifyListeners();
   }
 
-  void _sortSongs() {
+  void filterSongs() {
+    _filterSongs = _songs.where((song) {
+      return song.trackName.toLowerCase().contains(_term.toLowerCase()) ||
+          song.collectionName.toLowerCase().contains(_term.toLowerCase());
+    }).toList();
+    sortSongs();
+    notifyListeners();
+  }
+
+  void sortSongs() {
     if (_sortOption == 'trackName') {
-      _songs.sort((a, b) =>
+      _filterSongs.sort((a, b) =>
           a.trackName.toLowerCase().compareTo(b.trackName.toLowerCase()));
     } else {
-      _songs.sort((a, b) => a.collectionName
+      _filterSongs.sort((a, b) => a.collectionName
           .toLowerCase()
           .compareTo(b.collectionName.toLowerCase()));
     }
