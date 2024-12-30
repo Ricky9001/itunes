@@ -16,6 +16,9 @@ class SearchViewModel extends ChangeNotifier {
   String get term => _term;
   String get sortOption => _sortOption;
   String get error => _error;
+  SearchViewModel() {
+    searchSongs();
+  }
 
   void setTerm(String term) {
     _term = term;
