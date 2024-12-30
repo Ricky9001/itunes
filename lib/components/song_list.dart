@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:itunes/models/song.dart';
+import 'package:itunes/screens/playaudio_screen.dart';
 
 class SongList extends StatelessWidget {
   final List<Song> songs;
@@ -16,6 +17,14 @@ class SongList extends StatelessWidget {
             leading: Image.network(song.artworkUrl100),
             title: Text(song.trackName),
             subtitle: Text(song.collectionName),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AudioPlayerScreen(song: song),
+                ),
+              );
+            },
           );
         });
   }
