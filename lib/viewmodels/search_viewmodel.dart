@@ -38,9 +38,12 @@ class SearchViewModel extends ChangeNotifier {
 
   void _sortSongs() {
     if (_sortOption == 'trackName') {
-      _songs.sort((a, b) => a.trackName.compareTo(b.trackName));
+      _songs.sort((a, b) =>
+          a.trackName.toLowerCase().compareTo(b.trackName.toLowerCase()));
     } else {
-      _songs.sort((a, b) => a.collectionName.compareTo(b.collectionName));
+      _songs.sort((a, b) => a.collectionName
+          .toLowerCase()
+          .compareTo(b.collectionName.toLowerCase()));
     }
   }
 }
