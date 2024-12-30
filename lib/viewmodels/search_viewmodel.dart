@@ -14,15 +14,33 @@ class SearchViewModel extends ChangeNotifier {
   String get sortOption => _sortOption;
   String get error => _error;
 
-  void setTerm(String term) {}
+  void setTerm(String term) {
+    _term = term;
+    notifyListeners();
+  }
 
   Future<void> searchSongs() async {
     try {
       final results = await _iTunesService.searchSongs();
       _songs = results.map((data) => Song.fromJson(data)).toList();
+      _sortSongs();
     } catch (err) {
       _error = 'Cannot fetch songs';
     }
     notifyListeners();
+  }
+
+  void setSortOption(String option) {
+    _sortOption = option;
+    _sortSongs();
+    notifyListeners();
+  }
+
+  void _sortSongs() {
+    if (_sortOption == 'trackName') {
+      _songs.sort((a, b) => a.trackName.compareTo(b.trackName));
+    } else {
+      _songs.sort((a, b) => a.collectionName.compareTo(b.collectionName));
+    }
   }
 }

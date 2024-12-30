@@ -23,13 +23,17 @@ class SearchScreen extends StatelessWidget {
                     Radio(
                       value: 'trackName',
                       groupValue: viewModel.sortOption,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        viewModel.setSortOption(value!);
+                      },
                     ),
                     Text('Songs'),
                     Radio(
                       value: 'collectionName',
                       groupValue: viewModel.sortOption,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        viewModel.setSortOption(value!);
+                      },
                     ),
                     Text('Albums'),
                   ],
