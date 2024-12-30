@@ -1,0 +1,32 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+pubspec.lock
+
+# Build outputs
+build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Flutter.podspec.json
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Runner/GeneratedPluginRegistrant.h
+ios/Runner/GeneratedPluginRegistrant.m
+
+# Android related
+android/.gradle/
+android/app/build/
+android/app/src/debug/
+android/app/src/profile/
+android/local.properties
+
+# IDE related
+.idea/
+.vscode/
+*.iml
+
+# Miscellaneous
+*.log
+*.tmp
+*.swp
+.DS_Store
