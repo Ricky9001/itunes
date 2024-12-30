@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:itunes/models/song.dart';
 import 'package:itunes/services/itune_service.dart';
@@ -9,6 +10,7 @@ class SearchViewModel extends ChangeNotifier {
   String _term = '';
   String _sortOption = 'trackName';
   String _error = '';
+  Timer? _timer;
 
   List<Song> get songs => _filterSongs;
   String get term => _term;
@@ -17,6 +19,10 @@ class SearchViewModel extends ChangeNotifier {
 
   void setTerm(String term) {
     _term = term;
+    if (_timer?.isActive ?? false) _timer?.cancel();
+    _timer = Timer(const Duration(milliseconds: 100), () {
+      searchSongs();
+    });
     notifyListeners();
   }
 
@@ -55,5 +61,11 @@ class SearchViewModel extends ChangeNotifier {
           .toLowerCase()
           .compareTo(b.collectionName.toLowerCase()));
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
