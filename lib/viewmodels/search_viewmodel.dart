@@ -68,6 +68,7 @@ class SearchViewModel extends ChangeNotifier {
   }
 
   void sortSongs() {
+    _currPage = 1;
     if (_sortOption == 'trackName') {
       _filterSongs.sort((a, b) =>
           a.trackName.toLowerCase().compareTo(b.trackName.toLowerCase()));
