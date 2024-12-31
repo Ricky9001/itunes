@@ -1,3 +1,4 @@
+// Model representing a song
 class Song {
   final String artistName;
   final String trackName;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:itunes/models/song.dart';
 import 'package:itunes/services/itune_service.dart';
 
+// View model for managing the searching and sorting of songs
 class SearchViewModel extends ChangeNotifier {
   final ITuneService _iTunesService = ITuneService();
   List<Song> _songs = [];
@@ -28,8 +29,11 @@ class SearchViewModel extends ChangeNotifier {
     searchSongs();
   }
 
+  // Manage the searching keyword
   void setTerm(String term) {
     _term = term;
+
+    // handle event to the searching word when adding or deleting a letter
     if (_timer?.isActive ?? false) _timer?.cancel();
     _timer = Timer(const Duration(milliseconds: 100), () {
       searchSongs();
@@ -57,6 +61,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Manage the sorting option
   void setSortOption(String option) {
     _sortOption = option;
     sortSongs();
@@ -64,6 +69,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Manage filtering the song list by song and name and album name
   void filterSongs() {
     _filterSongs = _songs.where((song) {
       return song.trackName.toLowerCase().contains(_term.toLowerCase()) ||
@@ -78,6 +84,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Sort the song list by sort option and ascending order
   void sortSongs() {
     _currPage = 1;
     if (_sortOption == 'trackName') {
@@ -97,6 +104,7 @@ class SearchViewModel extends ChangeNotifier {
     }
   }
 
+  // Showing the song list by page
   void pageSongs() {
     final startIndex = (_currPage - 1) * _pageSize;
     final endIndex = startIndex + _pageSize;
@@ -105,6 +113,7 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // handle next page function of the song list
   void nextPage() {
     if (_currPage * _pageSize < _filterSongs.length) {
       _currPage++;
@@ -113,6 +122,7 @@ class SearchViewModel extends ChangeNotifier {
     }
   }
 
+  // handle previous page function of the song list
   void prevPage() {
     if (_currPage > 1) {
       _currPage--;

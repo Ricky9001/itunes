@@ -8,6 +8,7 @@ class AudioPlayerScreen extends StatelessWidget {
   final int index;
   AudioPlayerScreen({required this.songs, required this.index});
 
+  // Format the time showing on the screen
   String formatTime(Duration duration) {
     String sec = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     String showTime = '${duration.inMinutes}:${sec}';
